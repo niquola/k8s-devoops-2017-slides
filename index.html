@@ -1,0 +1,310 @@
+<!doctype html>
+<html lang="en">
+
+	<head>
+		<meta charset="utf-8">
+
+		<title>reveal.js – The HTML Presentation Framework</title>
+
+		<meta name="description" content="A framework for easily creating beautiful presentations using HTML">
+		<meta name="author" content="Hakim El Hattab">
+
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+		<link rel="stylesheet" href="css/reveal.css">
+		<link rel="stylesheet" href="css/theme/black.css" id="theme">
+
+		<!-- Theme used for syntax highlighting of code -->
+		<link rel="stylesheet" href="lib/css/zenburn.css">
+
+		<!-- Printing and PDF exports -->
+		<script>
+			var link = document.createElement( 'link' );
+			link.rel = 'stylesheet';
+			link.type = 'text/css';
+			link.href = window.location.search.match( /print-pdf/gi ) ? 'css/print/pdf.css' : 'css/print/paper.css';
+			document.getElementsByTagName( 'head' )[0].appendChild( link );
+		</script>
+
+		<!--[if lt IE 9]>
+		<script src="lib/js/html5shiv.js"></script>
+		<![endif]-->
+	</head>
+
+	<body>
+
+		<div class="reveal">
+			<div class="slides">
+<section data-markdown>
+  <script type="text/template">
+    ## Logic programming
+
+    ----
+
+   ```
+    frprog spb 2017 by @niquola
+   ```
+  </script>
+</section>
+
+<section data-markdown><script type="text/template">
+## Что такоеа логика?
+</script></section>
+
+<section data-markdown><script type="text/template">
+## Что такоеа логика?
+
+др.-греч. λογική — «способность к рассуждению»
+λόγος — «рассуждение», «мысль», «разум»
+
+---
+
+наука о формах и законах правильного мышления
+
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## Форма́льная ло́гика
+
+наука о правилах преобразования и конструирования высказываний
+
+</script></section>
+
+
+<section data-markdown><script type="text/template">
+
+## Formal System => Language: 
+
+Formal system uses a set of primitive symbols to construct
+a formal language from a set of axioms through
+inferential rules of formation.
+
+</script></section>
+
+<section data-markdown><script type="text/template">
+Logics:
+
+* propositional logic (ZOL)
+* description logic :)
+* predicate logic (FOL)
+* modal logic, fuzzy logic .....
+
+</script></section>
+
+
+<section data-markdown><script type="text/template">
+
+### Propositional calculus 
+-----
+
+* propositions - a,b,c - vars
+* operators -  (imply, not, and, or, bicondition)  
+
+```
+not ((a and b) imply (not c or d))
+```
+
+</script></section>
+
+
+<section data-markdown><script type="text/template">
+
+## Proofs
+---
+determine relations of logical equivalence between propositional formulas
+by means of the available transformation rules
+
+</script></section>
+
+<section data-markdown><script type="text/template">
+## Rule of inference
+
+---
+
+a function which takes premises and returns a conclusion
+
+[rules](https://en.wikipedia.org/wiki/Propositional_calculus#Example_2._Natural_deduction_system)
+</script></section>
+
+
+<section data-markdown><script type="text/template">
+## [Example proof](http://intrologic.stanford.edu/exercises/exercise_04_01.html)
+</script></section>
+
+
+<section data-markdown><script type="text/template">
+## Properties
+
+* Consistency
+* Validity
+* Completeness
+* Soundness
+
+</script></section>
+
+<section data-markdown><script type="text/template">
+### Consistency
+----
+no theorem of the system contradicts another.
+</script></section>
+
+<section data-markdown><script type="text/template">
+### Validity
+----
+system's rules of proof never allow a false inference from true premises
+</script></section>
+
+<section data-markdown><script type="text/template">
+### Completeness
+----
+if a formula is true, it can be proven, i.e. is a theorem of the system.
+</script></section>
+
+<section data-markdown><script type="text/template">
+### Soundness
+----
+if any formula is a theorem of the system, it is true. This is the
+converse of completeness.
+</script></section>
+
+<section data-markdown><script type="text/template">
+## [First Order Logic](https://en.wikipedia.org/wiki/First-order_logic#Logical_symbols)
+
+* The quantifier symbols ∀ and ∃
+* The logical connectives: ∧, ∨, →, ↔, ¬
+* variables x, y, z
+* predicate P(x, y, z)
+* function F(x, y, z)
+
+Rule of inference: unification
+
+</script></section>
+
+<section data-markdown><script type="text/template">
+## Prolog
+
+* facts
+* rules
+* queries
+
+</script></section>
+
+<section data-markdown><script type="text/template">
+## Prolog Unification
+
+http://swish.swi-prolog.org/example/lists.pl
+
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## [MiniCanren](http://io.livecode.ch/learn/webyrd/webmk)
+
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## Datalog
+
+```
+%% facts
+parent(bill, mary).
+parent(mary, john).
+
+%% rules
+ancestor(X,Y) :- parent(X,Y).
+ancestor(X,Y) :- parent(X,Z),ancestor(Z,Y).
+
+%% queries
+
+?- ancestor(bill,X).
+```
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## [Datalog Example](http://swish.swi-prolog.org/example/movies.pl)
+
+```
+diractor(M,A) :- actor(M, A, _), director(M, A).
+```
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## [Datomic & Datascript]
+
+
+```
+[:find ?id ?type ?gender
+:in $ ?name
+:where
+[?e :artist/name ?name]
+[?e :artist/gid ?id]
+[?e :artist/type ?teid]
+[?teid :db/ident ?type]
+[?e :artist/gender ?geid]
+[?geid :db/ident ?gender]
+
+```
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## [Dedalus](https://www2.eecs.berkeley.edu/Pubs/TechRpts/2009/EECS-2009-173.html)
+
+Dedalus: Datalog in Time and Space
+
+[Strange Loop Video](https://www.youtube.com/watch?v=R2Aa4PivG0g)
+
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## Eve
+
+http://play.witheve.com/#/examples/quickstart.eve
+
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## Future or Past?
+
+</script></section>
+
+</div> </div>
+
+		<script src="lib/js/head.min.js"></script>
+		<script src="js/reveal.js"></script>
+
+		<script>
+
+			// More info https://github.com/hakimel/reveal.js#configuration
+			Reveal.initialize({
+				controls: true,
+				progress: true,
+				history: true,
+				center: true,
+
+				transition: 'slide', // none/fade/slide/convex/concave/zoom
+
+				// More info https://github.com/hakimel/reveal.js#dependencies
+				dependencies: [
+					{ src: 'lib/js/classList.js', condition: function() { return !document.body.classList; } },
+					{ src: 'plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: 'plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: 'plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
+					{ src: 'plugin/zoom-js/zoom.js', async: true },
+					{ src: 'plugin/notes/notes.js', async: true }
+				]
+			});
+
+		</script>
+
+	</body>
+</html>
