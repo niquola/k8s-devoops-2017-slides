@@ -4,7 +4,7 @@
 	<head>
 		<meta charset="utf-8">
 
-		<title>reveal.js – The HTML Presentation Framework</title>
+		<title>logic by niquola</title>
 
 		<meta name="description" content="A framework for easily creating beautiful presentations using HTML">
 		<meta name="author" content="Hakim El Hattab">
@@ -15,7 +15,8 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
 		<link rel="stylesheet" href="css/reveal.css">
-		<link rel="stylesheet" href="css/theme/black.css" id="theme">
+		<!-- <link rel="stylesheet" href="css/theme/black.css" id="theme"> -->
+		<link rel="stylesheet" href="css/theme/white.css" id="theme">
 
 		<!-- Theme used for syntax highlighting of code -->
 		<link rel="stylesheet" href="lib/css/zenburn.css">
@@ -28,6 +29,9 @@
 			link.href = window.location.search.match( /print-pdf/gi ) ? 'css/print/pdf.css' : 'css/print/paper.css';
 			document.getElementsByTagName( 'head' )[0].appendChild( link );
 		</script>
+    <style>
+     .reveal section img { background: white; }
+      </style>
 
 		<!--[if lt IE 9]>
 		<script src="lib/js/html5shiv.js"></script>
@@ -51,11 +55,11 @@
 </section>
 
 <section data-markdown><script type="text/template">
-## Что такоеа логика?
+## Что такое логика?
 </script></section>
 
 <section data-markdown><script type="text/template">
-## Что такоеа логика?
+## Что такое логика?
 
 др.-греч. λογική — «способность к рассуждению»
 λόγος — «рассуждение», «мысль», «разум»
@@ -185,7 +189,7 @@ Rule of inference: unification
 </script></section>
 
 <section data-markdown><script type="text/template">
-## Prolog
+## Prolog & Datalog
 
 * facts
 * rules
@@ -194,21 +198,47 @@ Rule of inference: unification
 </script></section>
 
 <section data-markdown><script type="text/template">
-## Prolog Unification
+## Unification
 
-http://swish.swi-prolog.org/example/lists.pl
+```
+(u/unify {:first '?first
+          :last  '?last
+          :genre :giallo}
+
+         {:first "Dario"
+          :last  "Argento"
+          :genre :giallo})
+```
 
 </script></section>
+
 
 <section data-markdown><script type="text/template">
 
 ## [MiniCanren](http://io.livecode.ch/learn/webyrd/webmk)
 
+https://github.com/clojure/core.logic
+
+```
+(run* [q]
+   (fresh [a]
+     (== q a)
+     (membero a [3 4 5])
+     (membero q [1 2 3])))
+```
+
 </script></section>
 
 <section data-markdown><script type="text/template">
 
-## Datalog
+## Forward Chaining
+## Backward Chaining
+
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## [Datalog](http://swish.swi-prolog.org/example/movies.pl)
 
 ```
 %% facts
@@ -225,14 +255,6 @@ ancestor(X,Y) :- parent(X,Z),ancestor(Z,Y).
 ```
 </script></section>
 
-<section data-markdown><script type="text/template">
-
-## [Datalog Example](http://swish.swi-prolog.org/example/movies.pl)
-
-```
-diractor(M,A) :- actor(M, A, _), director(M, A).
-```
-</script></section>
 
 <section data-markdown><script type="text/template">
 
@@ -274,15 +296,44 @@ Dedalus: Datalog in Time and Space
 
 <section data-markdown><script type="text/template">
 
-## Eve
+## [Modal Logic in Access Control](https://users.soe.ucsc.edu/~abadi/Papers/lics2003.pdf)
+                        
 
-http://play.witheve.com/#/examples/quickstart.eve
+```
+  Bob says may-access(Alice,Foo.txt,Rd)
+
+```
 
 </script></section>
 
 <section data-markdown><script type="text/template">
 
-## Future or Past?
+## Production Rule System
+
+![](rete.png)
+
+[Rete Algorythm](https://en.wikipedia.org/wiki/Rete_algorithm)
+
+https://github.com/cerner/clara-rules
+
+</script></section>
+
+
+<section data-markdown><script type="text/template">
+
+## Eve
+
+http://play.witheve.com/#/examples/quickstart.eve
+
+Om-next
+
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## [Out of the tar pit](http://shaffner.us/cs/papers/tarpit.pdf)
+
+Everything is database
 
 </script></section>
 
