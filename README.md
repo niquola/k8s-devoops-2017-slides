@@ -7,7 +7,8 @@
 * kubernetes & docker
 * docker essentials
 * kubernetes model
-* helm sucks
+* cybernetic
+* building abstractions helm sucks
 * extending kubernetes
 * miniproject app
 * demo
