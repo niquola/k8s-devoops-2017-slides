@@ -18,6 +18,8 @@
 * create/update/list/delete
 * reconcile cycle
 * see how it works
+* watch api
+* status, subresorces
 * custom CI
 * problem (Jenkins, TeamCity, travis)
 * solution architecture + features
