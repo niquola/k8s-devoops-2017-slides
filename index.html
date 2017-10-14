@@ -6,8 +6,8 @@
 
 		<title>logic by niquola</title>
 
-		<meta name="description" content="A framework for easily creating beautiful presentations using HTML">
-		<meta name="author" content="Hakim El Hattab">
+		<meta name="description" content="exetend k8s">
+		<meta name="author" content="Nikoai Ryzhikov">
 
 		<meta name="apple-mobile-web-app-capable" content="yes">
 		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -17,6 +17,7 @@
 		<link rel="stylesheet" href="css/reveal.css">
 		<!-- <link rel="stylesheet" href="css/theme/black.css" id="theme"> -->
 		<link rel="stylesheet" href="css/theme/white.css" id="theme">
+<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css">
 
 		<!-- Theme used for syntax highlighting of code -->
 		<link rel="stylesheet" href="lib/css/zenburn.css">
@@ -30,7 +31,18 @@
 			document.getElementsByTagName( 'head' )[0].appendChild( link );
 		</script>
     <style>
-     .reveal section img { background: white; }
+     .reveal section img { background: white !important; border: none !important; box-shadow: none;}
+     .reveal section hr { border-color: #ddd; border-top: none; } 
+     .reveal section h1,
+     .reveal section h3,
+     .reveal section h2 {color: #e94b35 !important; }
+
+.reveal pre code {
+  background: black;
+  overflow: hidden;
+  max-height: 500px;
+  padding: 30px 30px 50px;
+}
       </style>
 
 		<!--[if lt IE 9]>
@@ -44,298 +56,169 @@
 			<div class="slides">
 <section data-markdown>
   <script type="text/template">
-    ## Logic programming
+    ## Extend k8s
 
     ----
 
-   ```
-    frprog spb 2017 by @niquola
-   ```
+    devoops spb 2017 by @niquola
   </script>
 </section>
 
+<section>
+  <h3>Николай Рыжиков</h3>
+  <hr/>
+  <p>CTO of health-samurai.io</p>
+  <a href="http://github.com/niquola">
+    <i class="fa fa-github"></i>
+    <a href="http://twitter.com/niquola">
+      <i class="fa fa-twitter"></i>
+    </a>
+    <a href="https://plus.google.com/u/0/+%D0%9D%D0%B8%D0%BA%D0%BE%D0%BB%D0%B0%D0%B9%D0%A0%D1%8B%D0%B6%D0%B8%D0%BA%D0%BE%D0%B2">
+      <i class="fa fa-google-plus"></i>
+    </a> <a href="https://www.facebook.com/nicola.ryzhikov">
+      <i class="fa fa-facebook"></i>
+    </a>
+    </p>
+    <!-- <img src="niquola.jpeg" style="border:none; box-shado: none; background: transparent;"/> -->
+</section>
+
 <section data-markdown><script type="text/template">
-## Что такое логика?
+Our DevOps formula:
+
+----
+## devs do ops
 </script></section>
 
 <section data-markdown><script type="text/template">
-## Что такое логика?
+### Our Ops Hx
+----
 
-др.-греч. λογική — «способность к рассуждению»
-λόγος — «рассуждение», «мысль», «разум»
+* Capistrano & Bare-Metal: *2009*
+* Chef & AWS: *2012*
+* Ansible & Docker: *2014*
+* Terraform & Condo: *2016*
+* k8s & GC: *2017*
 
+</script></section>
+
+<section data-markdown><script type="text/template">
+## I can't get no satisfaction
+
+----
+
+![jagger.jpg](jagger.jpg)
+
+</script></section>
+
+
+<section data-markdown><script type="text/template">
+### QA & Ops is a waste
+----
+LEAN: eliminate waste!
+</script></section>
+
+
+
+<section data-markdown><script type="text/template">
+
+## Wonna NoOPS
+---
+aka heroku
+
+```sh
+> heroku create
+> ....
+> git push heroku master
+
+```
+
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## Options
 ---
 
-наука о формах и законах правильного мышления
+* heroku
+* deiz
+* cloud formation
 
 </script></section>
 
 <section data-markdown><script type="text/template">
 
-## Форма́льная ло́гика
+## Build it yourself
 
-наука о правилах преобразования и конструирования высказываний
-
-</script></section>
-
-
-<section data-markdown><script type="text/template">
-
-## Formal System => Language: 
-
-Formal system uses a set of primitive symbols to construct
-a formal language from a set of axioms through
-inferential rules of formation.
-
-</script></section>
-
-<section data-markdown><script type="text/template">
-Logics:
-
-* propositional logic (ZOL)
-* description logic :)
-* predicate logic (FOL)
-* modal logic, fuzzy logic .....
-
-</script></section>
-
-
-<section data-markdown><script type="text/template">
-
-### Propositional calculus 
------
-
-* propositions - a,b,c - vars
-* operators -  (imply, not, and, or, bicondition)  
-
-```
-not ((a and b) imply (not c or d))
-```
-
-</script></section>
-
-
-<section data-markdown><script type="text/template">
-
-## Proofs
----
-determine relations of logical equivalence between propositional formulas
-by means of the available transformation rules
-
-</script></section>
-
-<section data-markdown><script type="text/template">
-## Rule of inference
-
----
-
-a function which takes premises and returns a conclusion
-
-[rules](https://en.wikipedia.org/wiki/Propositional_calculus#Example_2._Natural_deduction_system)
-</script></section>
-
-
-<section data-markdown><script type="text/template">
-## [Example proof](http://intrologic.stanford.edu/exercises/exercise_04_01.html)
-</script></section>
-
-
-<section data-markdown><script type="text/template">
-## Properties
-
-* Consistency
-* Validity
-* Completeness
-* Soundness
-
-</script></section>
-
-<section data-markdown><script type="text/template">
-### Consistency
 ----
-no theorem of the system contradicts another.
-</script></section>
 
-<section data-markdown><script type="text/template">
-### Validity
-----
-system's rules of proof never allow a false inference from true premises
-</script></section>
-
-<section data-markdown><script type="text/template">
-### Completeness
-----
-if a formula is true, it can be proven, i.e. is a theorem of the system.
-</script></section>
-
-<section data-markdown><script type="text/template">
-### Soundness
-----
-if any formula is a theorem of the system, it is true. This is the
-converse of completeness.
-</script></section>
-
-<section data-markdown><script type="text/template">
-## [First Order Logic](https://en.wikipedia.org/wiki/First-order_logic#Logical_symbols)
-
-* The quantifier symbols ∀ and ∃
-* The logical connectives: ∧, ∨, →, ↔, ¬
-* variables x, y, z
-* predicate P(x, y, z)
-* function F(x, y, z)
-
-Rule of inference: unification
+with docker & k8s 
 
 </script></section>
 
 <section data-markdown><script type="text/template">
-## Prolog & Datalog
+![docker.png](docker.png)
+</script></section>
 
-* facts
-* rules
-* queries
+<section data-markdown><script type="text/template">
+![cybernetic.png](cybernetic.png)
+</script></section>
+
+<section data-markdown><script type="text/template">
+![k8s-primitives.png](k8s-primitives.png)
+</script></section>
+
+<section data-markdown><script type="text/template">
+## k8s Deployment & ...
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## HELM is not k8s way
 
 </script></section>
 
 <section data-markdown><script type="text/template">
-## Unification
 
-```
-(u/unify {:first '?first
-          :last  '?last
-          :genre :giallo}
+![miniheroku.png](miniheroku.png)
 
-         {:first "Dario"
-          :last  "Argento"
-          :genre :giallo})
-```
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## Kubernetes API
+
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## CI for hackers on k8s
+
+* CI - job runner
+* No UI - chatops 
+* Part of infrastructure
+* One command deploy
 
 </script></section>
 
 
 <section data-markdown><script type="text/template">
 
-## [MiniCanren](http://io.livecode.ch/learn/webyrd/webmk)
+## Pg operator
 
-https://github.com/clojure/core.logic
-
-```
-(run* [q]
-   (fresh [a]
-     (== q a)
-     (membero a [3 4 5])
-     (membero q [1 2 3])))
-```
+* Pg resource
+* How it could be implemented
 
 </script></section>
 
 <section data-markdown><script type="text/template">
 
-## Forward Chaining
-## Backward Chaining
+## Future
+
+* Ideal World as logical database with rules & inference
+
 
 </script></section>
 
-<section data-markdown><script type="text/template">
-
-## [Datalog](http://swish.swi-prolog.org/example/movies.pl)
-
-```
-%% facts
-parent(bill, mary).
-parent(mary, john).
-
-%% rules
-ancestor(X,Y) :- parent(X,Y).
-ancestor(X,Y) :- parent(X,Z),ancestor(Z,Y).
-
-%% queries
-
-?- ancestor(bill,X).
-```
-</script></section>
-
-
-<section data-markdown><script type="text/template">
-
-## [Datomic & Datascript]
-
-
-```
-[:find ?id ?type ?gender
-:in $ ?name
-:where
-[?e :artist/name ?name]
-[?e :artist/gid ?id]
-[?e :artist/type ?teid]
-[?teid :db/ident ?type]
-[?e :artist/gender ?geid]
-[?geid :db/ident ?gender]
-
-```
-</script></section>
-
-
-<section data-markdown><script type="text/template">
-## [LogiQL](https://developer.logicblox.com/content/docs4/tutorial/repl/section/split.html)
-
-[docs](https://developer.logicblox.com/content/docs4/core-reference/webhelp/introduction.html)
-
-</script></section>
-
-
-<section data-markdown><script type="text/template">
-
-## [Dedalus](https://www2.eecs.berkeley.edu/Pubs/TechRpts/2009/EECS-2009-173.html)
-
-Dedalus: Datalog in Time and Space
-
-[Strange Loop Video](https://www.youtube.com/watch?v=R2Aa4PivG0g)
-
-</script></section>
-
-<section data-markdown><script type="text/template">
-
-## [Modal Logic in Access Control](https://users.soe.ucsc.edu/~abadi/Papers/lics2003.pdf)
-                        
-
-```
-  Bob says may-access(Alice,Foo.txt,Rd)
-
-```
-
-</script></section>
-
-<section data-markdown><script type="text/template">
-
-## Production Rule System
-
-![](rete.png)
-
-[Rete Algorythm](https://en.wikipedia.org/wiki/Rete_algorithm)
-
-https://github.com/cerner/clara-rules
-
-</script></section>
-
-
-<section data-markdown><script type="text/template">
-
-## Eve
-
-http://play.witheve.com/#/examples/quickstart.eve
-
-Om-next
-
-</script></section>
-
-<section data-markdown><script type="text/template">
-
-## [Out of the tar pit](http://shaffner.us/cs/papers/tarpit.pdf)
-
-Everything is database
-
-</script></section>
 
 </div> </div>
 

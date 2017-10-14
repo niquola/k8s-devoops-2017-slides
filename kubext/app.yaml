@@ -1,0 +1,9 @@
+apiVersion: "health-samurai.io/v1"
+kind: App
+metadata:
+  name: service2
+spec:
+  domain: devoops.local
+  image: gcr.io/google_containers/echoserver
+  version: 1.4
+  replicas: 1
