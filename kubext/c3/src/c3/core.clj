@@ -3,12 +3,42 @@
             [k8s.core :as k8s]
             [clojure.string :as str]))
 
-
 (defn debug [x]
   (spit "/tmp/result.yaml"
-        (yaml/generate-string x  :flow-style :block)))
+        (yaml/generate-string x :dumper-options {:flow-style :block})))
 
-;; table metaphor
+(comment
+  ;; look at the root of api
+  (->
+   (k8s/curl "/")
+   cheshire.core/parse-string
+   debug)
+
+  ;; v1 api
+  (-> (k8s/curl "/api/v1")
+      cheshire.core/parse-string
+      debug)
+
+  ;; in swagger format
+  (->
+   (k8s/curl "/swagger.json")
+   cheshire.core/parse-string
+   debug)
+
+  ;; get all pods
+  (-> (k8s/curl "/api/v1/pods")
+      cheshire.core/parse-string
+      (get "items")
+      (->> (map #(get-in % ["metadata" "name"])))
+      debug)
+
+  (-> (k8s/curl "/api/v1/namespaces/default/pods")
+      cheshire.core/parse-string
+      debug)
+
+  )
+
+;; we need to create table for custom resource
 (def app-definition
   {:apiVersion "apiextensions.k8s.io/v1beta1"
    :kind "CustomResourceDefinition"
@@ -22,17 +52,17 @@
   (k8s/patch app-definition))
 
 (comment
-  (-> app-definition debug)
 
-  (->
-   (k8s/curl "/")
-   cheshire.core/parse-string
-   debug)
+  ;; cleanup
+  (-> (k8s/delete app-definition)
+      (debug))
+
+  ;; see app-definition
+  (debug app-definition)
 
   ;; kubectl apply crd.yaml
-  (->
-   (init)
-   debug)
+  (-> (init)
+      debug)
 
   ;; kubectl get crd
   (->
@@ -48,36 +78,57 @@
    :ns "default"
    :apiVersion "health-samurai.io/v1"
    :metadata {:name "myservice"}
-   :spec {:domain "devoops.logal"
+   :spec {:domain "devoops.local"
           :image "gcr.io/google_containers/echoserver"
           :version 1.4
           :replicas 1}})
 
+(defn change-name [x nm]
+  (assoc-in x [:metadata :name] nm))
+
 (comment
   ;; kubectl get apps
 
+  (-> test-app debug)
+
+  ;; list apps
   (-> (k8s/query test-app)
-      (debug))
+      debug)
 
   ;; kubectl get apps
   (-> (k8s/create test-app)
+      debug)
+
+  (-> test-app
+      (change-name "yaservice")
+      (k8s/create)
       (debug))
 
-  (-> (k8s/create
-       (assoc-in test-app [:metadata :name] "myweb"))
+  (-> test-app
+      (change-name "yaservice")
+      (k8s/delete)
       (debug))
 
-  (-> (k8s/delete (assoc-in test-app [:metadata :name] "myweb"))
-      (debug))
+  ;; list apps
+  (->> (k8s/query test-app)
+       :items
+       (map (fn [x] [(get-in x [:metadata :name]) (:spec x)]))
+       debug)
 
+
+  ;; to delete
   (-> (k8s/delete test-app)
+      (debug))
+
+  ;; to delete all
+  (-> (k8s/delete-collection
+       (assoc test-app :labelSelector "app=myservice"))
       (debug))
 
 
   )
 
 (defn deployment
-
   [{{n :name} :metadata
     {img :image
      v :version
@@ -100,9 +151,27 @@
             :template template}}))
 
 (comment
+  ;; generate deployment
   (-> test-app
       deployment
       debug)
+
+  (def mydepl
+    (-> test-app
+        deployment))
+
+  ;; create deployment
+  (-> (assoc mydepl :ns "default")
+      (k8s/create)
+      (debug))
+
+  ;; delete deployment cascade
+  (-> (assoc mydepl :ns "default")
+      (k8s/delete {:kind "DeleteOptions"
+                   :apiVersion "v1"
+                   :propagationPolicy "Background"})
+      (debug))
+
   )
 
 (defn service
@@ -124,11 +193,11 @@
                    :port 80
                    :targetPort 8080}]}})
 
-
 (comment
   (-> test-app
       service
       debug)
+
   )
 
 (defn ingress-line [{{n :name} :metadata
@@ -302,28 +371,71 @@
                        (map-index (fn [acc pth act]
                                     (if (get-in expected pth)
                                       acc
-                                      (conj acc {:action :delete :resource act})))))]
+                                      (conj acc {:action :delete
+                                                 :resource act
+                                                 :options (when (contains? #{"Deployment"} (:kind act))
+                                                            {:kind "DeleteOptions"
+                                                             :apiVersion "v1"
+                                                             :propagationPolicy "Background"})})))))]
     (into to-update to-delete)))
 
-(defn reconcile []
-  (let [actions (*reconcile
-                 (expected-resources (get-apps))
-                 (actual-resources))]
-    (doseq [{res :resource a :action :as act} actions]
-      (let [res (assoc res :ns "default")]
-        (println (str/upper-case (name (:action act)))   res)
-        (cond
-          (= a :create) (println (k8s/create res))
-          (= a :update) (println (k8s/patch res)) 
-          (= a :delete) (println (k8s/delete res)))))
-    actions))
+(defn reconcile-actions []
+  (*reconcile
+   (expected-resources (get-apps))
+   (actual-resources)))
+
+(defn reconcile [actions]
+  (doseq [{res :resource a :action opt :options :as act} actions]
+    (let [res (assoc res :ns "default")]
+      (cond
+        (= a :create) (println (k8s/create res))
+        (= a :update) (println (k8s/patch res)) 
+        (= a :delete) (println (k8s/delete res opt))
+        (= a :delete-collection) (println (k8s/delete-collection res)))))
+  actions)
 
 (comment
-  (-> (reconcile)
+
+  ;; to delete all
+  (-> (k8s/delete-collection
+       test-app)
+      (debug))
+
+  ;; list apps
+  (-> (k8s/query test-app)
       debug)
 
-  (-> (k8s/delete
-       (assoc-in test-app [:metadata :name] "awesome"))
+  ;; create app
+  (-> (k8s/create test-app)
+      debug)
+
+  ;; create another app 
+  (-> test-app
+      (change-name "yaservice")
+      (k8s/create)
+      (debug))
+
+  ;; dry run
+  (->> (reconcile-actions) 
+       debug)
+
+  ;; apply
+  (-> (reconcile-actions)
+      reconcile
+      debug)
+
+  (-> test-app
+      (k8s/query)
+      debug)
+
+  (-> test-app
+      (k8s/delete)
+      (debug))
+
+  ;; delete another app 
+  (-> test-app
+      (change-name "yaservice")
+      (k8s/delete)
       (debug))
 
   )
@@ -336,22 +448,26 @@
 
 (defn start []
   (stop)
-  (let [thr (Thread. (fn []
-                       (println "Start")
-                       (try
-                         (while (not (Thread/interrupted))
-                           (reconcile)
-                           (Thread/sleep 5000))
-                         (catch java.lang.InterruptedException e
-                           (println "Bay, bay")))))]
+  (let [thr (Thread.
+             (fn []
+               (println "Start")
+               (try
+                 (while (not (Thread/interrupted))
+                   (reconcile (reconcile-actions))
+                   (Thread/sleep 5000))
+                 (catch java.lang.InterruptedException e
+                   (println "Bay, bay")))))]
     (reset! server thr)
     (.start thr)))
 
-
 (comment
+
+  ;; run in background
+  (start)
 
   (stop)
 
-  (start)
+  ;; just pack to docker
+  ;; and deploy to cluster
 
   )

@@ -1,0 +1,20 @@
+apiVersion: apps/v1beta1
+kind: Deployment
+metadata:
+  name: myservice
+  labels:
+    app: myservice
+    system: c3
+    domain: devoops.local
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: myservice
+    spec:
+      containers:
+      - name: app
+        image: gcr.io/google_containers/echoserver:1.4
+        ports:
+        - containerPort: 8080

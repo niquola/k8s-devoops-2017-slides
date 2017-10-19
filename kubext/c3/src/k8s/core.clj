@@ -110,11 +110,24 @@
         :body
         (json/parse-string))))
 
-(defn delete [res]
+(defn delete-collection [opts]
+  (let [uri   (resource-url opts (select-keys opts [:labelSelector ]))]
+    (println "DELETE " uri)
+    (-> @(http-client/delete
+          uri
+          {:headers (merge default-headers {"Content-Type" "application/json"})
+           :insecure? true})
+        :body
+        (json/parse-string))))
+
+;; ReplicationController, ReplicaSet, StatefulSet, DaemonSet, and Deployment
+
+(defn delete [res & [delete-opts]]
   (-> @(http-client/delete
         (str (resource-url res (get-in res [:metadata :name])))
-        {:headers (merge default-headers {"Content-Type" "application/json"})
-         :insecure? true})
+        (cond-> {:headers (merge default-headers {"Content-Type" "application/json"})
+                 :insecure? true}
+          delete-opts (assoc :body (json/generate-string (walk/stringify-keys delete-opts)))))
       :body
       (json/parse-string)))
 

@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: testme
+  namespace: default
+spec:
+  restartPolicy: Always
+  containers:
+  - image: amouat/network-utils
+    command:
+      - sleep
+      - "3600"
+    imagePullPolicy: IfNotPresent
+    name: busybox
