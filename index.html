@@ -56,7 +56,7 @@
 			<div class="slides">
 <section data-markdown>
   <script type="text/template">
-    ## Расширием k8s
+    ## Расширяем k8s
 
     ----
 
@@ -69,6 +69,7 @@
   <hr/>
   <p>CTO of health-samurai.io</p>
   <a href="http://github.com/niquola">
+    niquola
     <i class="fa fa-github"></i>
     <a href="http://twitter.com/niquola">
       <i class="fa fa-twitter"></i>
@@ -141,7 +142,7 @@ aka heroku
 
 * heroku
 * deiz
-* cloud foundation
+* cloud foundry
 
 </script></section>
 
@@ -159,6 +160,36 @@ c docker & k8s
 ![docker.png](docker.png)
 </script></section>
 
+
+<section data-markdown><script type="text/template">
+## POD
+----
+* volumes
+* containers
+* localhost 
+</script></section>
+
+<section data-markdown><script type="text/template">
+## Replication Set & Deployment
+----
+* replication
+* deployment
+</script></section>
+
+<section data-markdown><script type="text/template">
+## Service
+----
+* load balancing
+* service discovery
+</script></section>
+
+<section data-markdown><script type="text/template">
+## Ingress
+----
+* API gateway
+* ssl
+</script></section>
+
 <section data-markdown><script type="text/template">
 ## Ресурсы k8s
 ----
@@ -167,36 +198,64 @@ c docker & k8s
 </script></section>
 
 <section data-markdown><script type="text/template">
-## Пробуем
+## How it works?
 </script></section>
 
 
-<!-- <section data-markdown><script type="text/template">
-     ![cybernetic.png](cybernetic.png)
-     </script></section>
-   -->
 <section data-markdown><script type="text/template">
 ## Модель k8s
 ---
 ![k8s-model.png](diagrams/k8s-model.png)
 </script></section>
 
-<!-- <section data-markdown><script type="text/template">
-     ![k8s-primitives.png](k8s-primitives.png)
-     </script></section>
-   -->
+<section data-markdown><script type="text/template">
+## Real Systems
+----
+
+* conventions
+* services
+* databases
+* queues
+* ....
+
+</script></section>
+
 
 <section data-markdown><script type="text/template">
 ## абстракции
 ----
-## HELM is not k8s way
+
+HELM is not k8s way
 </script></section>
 
-<!-- <section data-markdown><script type="text/template">
-     ![miniheroku.png](miniheroku.png)
-     </script></section>
-   -->
 <section data-markdown><script type="text/template">
+## Do it like k8s
+----
+
+Custom Resources & Controllers
+</script></section>
+
+<section data-markdown><script type="text/template">
+## Declarative
+----
+
+```
+kind: App
+apiVersion: health-samurai.io/v1
+metadata:
+  name: myservice
+spec:
+  domain: devoops.local
+  image: gcr.io/google_containers/echoserver
+  version: 1.4
+  replicas: 2
+
+```
+</script></section>
+
+<section data-markdown><script type="text/template">
+## Custom Resource
+----
 ![miniheroku.png](diagrams/heroku.png)
 </script></section>
 
@@ -207,7 +266,7 @@ c docker & k8s
 <section data-markdown><script type="text/template">
 
 ## CI for hackers on k8s
-
+----
 * CI - job runner
 * No UI - chatops 
 * Part of infrastructure
@@ -216,10 +275,14 @@ c docker & k8s
 </script></section>
 
 <section data-markdown><script type="text/template">
+### ci3
+---
 ![ci3.png](diagrams/ci3.png)
 </script></section>
 
 <section data-markdown><script type="text/template">
+### pg3
+---
 ![pg3.png](diagrams/pg3.png)
 </script></section>
 

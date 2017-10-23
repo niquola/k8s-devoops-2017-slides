@@ -1,0 +1,10 @@
+kind: App
+ns: default
+apiVersion: health-samurai.io/v1
+metadata:
+  name: realone
+spec:
+  domain: devoops.local
+  image: gcr.io/google_containers/echoserver
+  version: 1.4
+  replicas: 2

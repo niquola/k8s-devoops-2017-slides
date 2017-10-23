@@ -8,6 +8,13 @@
         (yaml/generate-string x :dumper-options {:flow-style :block})))
 
 (comment
+  ;; repl
+  (-> (+ 1 3)
+      debug)
+
+  (-> (str "Hello " "clojure")
+      debug)
+
   ;; look at the root of api
   (->
    (k8s/curl "/")
@@ -87,8 +94,8 @@
   (assoc-in x [:metadata :name] nm))
 
 (comment
-  ;; kubectl get apps
 
+  ;; app resource
   (-> test-app debug)
 
   ;; list apps
@@ -96,9 +103,13 @@
       debug)
 
   ;; kubectl get apps
-  (-> (k8s/create test-app)
+  (-> test-app
+      k8s/create
       debug)
 
+  ;; kubectl get apps
+
+  ;; and another
   (-> test-app
       (change-name "yaservice")
       (k8s/create)
@@ -121,8 +132,8 @@
       (debug))
 
   ;; to delete all
-  (-> (k8s/delete-collection
-       (assoc test-app :labelSelector "app=myservice"))
+  (-> test-app
+      (k8s/delete-collection)
       (debug))
 
 
@@ -166,7 +177,8 @@
       (debug))
 
   ;; delete deployment cascade
-  (-> (assoc mydepl :ns "default")
+  (-> mydepl
+      (assoc :ns "default")
       (k8s/delete {:kind "DeleteOptions"
                    :apiVersion "v1"
                    :propagationPolicy "Background"})
@@ -209,18 +221,21 @@
 
 
 (comment
+  ;; each app has rule in ingress
   (-> test-app
       ingress-line 
       debug)
+
   )
 
 
 (defn get-deployments []
-  (mapv #(merge % {:kind "Deployment" :apiVersion "apps/v1beta1"})
-        (:items (k8s/query {:kind "Deployment"
-                            :apiVersion "apps/v1beta1"
-                            :ns "default"}
-                           {:labelSelector "system in (c3)"}))))
+  (->> {:labelSelector "system in (c3)"}
+       (k8s/query {:kind "Deployment"
+                   :apiVersion "apps/v1beta1"
+                   :ns "default"})
+       :items
+       (mapv #(merge % {:kind "Deployment" :apiVersion "apps/v1beta1"}))))
 
 (comment
   (-> (get-deployments)
@@ -229,10 +244,12 @@
   )
 
 (defn get-services []
-  (mapv #(merge % {:kind "Service" :apiVersion "v1"})
-        (:items (k8s/query {:kind "Service"
-                            :apiVersion "v1"
-                            :ns "default"} {:labelSelector "system in (c3)"}))))
+  (->> {:labelSelector "system in (c3)"}
+       (k8s/query {:kind "Service"
+                   :apiVersion "v1"
+                   :ns "default"})
+       :items
+       (mapv #(merge % {:kind "Service" :apiVersion "v1"}))))
 
 (comment
   (-> (get-services)
@@ -242,9 +259,11 @@
 
 
 (defn get-apps []
-  (:items (k8s/query {:kind "App"
-                      :apiVersion "health-samurai.io/v1"
-                      :ns "default"})))
+  (->> {:kind "App"
+        :apiVersion "health-samurai.io/v1"
+        :ns "default"}
+       k8s/query
+       :items))
 
 (comment
   (-> (get-apps)
@@ -281,8 +300,10 @@
       (conj resources ing))))
 
 (comment
+  ;; what we gonna generate
   (-> 
-   (expected-resources [test-app])
+   [test-app]
+   (expected-resources)
    debug)
 
   )
@@ -294,6 +315,7 @@
 
 
 (comment
+  ;; waht we have
   (-> 
    (actual-resources)
    debug)
@@ -308,6 +330,7 @@
         {})))
 
 (comment
+
   (-> (get-apps)
       expected-resources
       index-resources
@@ -361,20 +384,23 @@
   (let [expected  (index-resources expected)
         actual    (index-resources actual)
         to-update (->> expected
-                       (map-index (fn [acc pth res]
-                                    (if-let [act (get-in actual pth)]
-                                      (if-let [diff (do-compare res act)]
-                                        (conj acc {:action :update :resource res :diff diff})
-                                        acc)
-                                      (conj acc {:action :create :resource res})))))
+                       (map-index
+                        (fn [acc pth res]
+                          (if-let [act (get-in actual pth)]
+                            (if-let [diff (do-compare res act)]
+                              (conj acc {:action :update :resource res :diff diff})
+                              acc)
+                            (conj acc {:action :create :resource res})))))
+
         to-delete (->> actual
-                       (map-index (fn [acc pth act]
-                                    (if (get-in expected pth)
-                                      acc
-                                      (conj acc {:action :delete
-                                                 :resource act
-                                                 :options (when (contains? #{"Deployment"} (:kind act))
-                                                            {:kind "DeleteOptions"
+                       (map-index
+                        (fn [acc pth act]
+                          (if (get-in expected pth)
+                            acc
+                            (conj acc {:action :delete
+                                       :resource act
+                                       :options (when (contains? #{"Deployment"} (:kind act))
+                                                  {:kind "DeleteOptions"
                                                              :apiVersion "v1"
                                                              :propagationPolicy "Background"})})))))]
     (into to-update to-delete)))
@@ -424,10 +450,12 @@
       reconcile
       debug)
 
+  ;; list apps
   (-> test-app
       (k8s/query)
       debug)
 
+  ;; delete myservice
   (-> test-app
       (k8s/delete)
       (debug))
